@@ -209,7 +209,14 @@ In fact a developer never pushes to the official repository, but instread invite
 
 So far, we've shown how to push changes to a remote repository but didn't address the important aspect of obtaining changes made by others. In the git lingo, this is called **pull**ing. This step should also happen as often as possible in order to be kept updated with the changes made by others.
 
-For this purpose, we'll add a remote called **official**, which will link to the mainstream [HEP-FCC/GitTutorial](https://github.com/HEP-FCC/GitTutorial) repository:
+A **pull** is the reciprocal of a **push** and in fact is a shortcut for two operations:
+
+1. A **fetch**, which will update our local repository (the contents of the `.git` folder in your working copy) with the contents from the remote (origin by default).
+2. A **merge**, which will combine the modifications done on the remote repository with those done in ours, generating a new (merge) commit. Often this is a seamless process, but sometimes conflicts have to be resolved (similar to what has to be done with other VCS).
+
+## Adding links to remote repositories
+
+Before pulling, we'll add a remote called **official**, which will link to the mainstream [HEP-FCC/GitTutorial](https://github.com/HEP-FCC/GitTutorial) repository:
 
 ```
 GitTutorial $ git remote add official git@github.com:HEP-FCC/GitTutorial.git
@@ -225,7 +232,7 @@ This will be used to interact with the main repository.
 We can now pull from the official repository. Because we have linked the master to our own fork, we need to explicity tell `git` what our intentions are:
 
 ```
-GitTutorialLocal $ git fetch official master
+GitTutorialLocal $ git pull official master
 remote: Counting objects: 1, done.
 remote: Total 1 (delta 0), reused 1 (delta 0)
 Unpacking objects: 100% (1/1), done.
@@ -270,3 +277,22 @@ GitTutorial $ git branch --verbose --all
 ```
 
 We now notice that the [ahead 2] notification has disappeared.
+
+## Collaborating with other developers before submitting a pull request
+
+In case a feature is developed by several people, it is recommended to share the work and test the feature before submitting a pull request (this is true in general, not only in this case). In order to collaborate with others, the preferred way is to define a new remote (as we did for official) and point to to another developer's fork. Then, each developer can push to his/her fork and pull from that of the others. When everybody is happy, one of the forks can be used to initiate a pull request to inform the maintainers of the new feature.
+
+An alternative method, but more advanced, is to provide commit rights to your fork to other developers.
+
+
+# Tips for using git effectively
+
+## Commit smaller chunks, more often
+
+Git has very powerful mechanisms for dealing with merges (i.e. the fact of bringing in changes), but it is more effective when the commits reflect modifications towards a specific goal (i.e. doesn't modify two packages in an unrelated way). This way, git can resolve conflicts more easily, which is the reason why pull requests paratially enforce the usage of commits and branches towards a specific feature.
+
+## Pull often to detect (and fix) conflicts as early as possible
+
+Nobody likes resovling conflicts. However, there are some ways to detect such conflicts early, and address them quickly: pulling often. Indeed, by bringing in modifications done by other developers, conflicts are deteted faster than if one waits until a feature is complete (and many other features have been added by others). In addition, conflicts appearing when pulling mean that the conflicts are related to the code that you've modified, and hence you're more likely to be able to fix the conflcit, and most likely better than the maintainers who might not be familiar with the specifics of the package you're developing.
+
+# To be continued ...
