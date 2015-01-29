@@ -115,3 +115,158 @@ Untracked files not listed (use -u option to show untracked files)
 We have just added our file to be staged as part of the next commit. But git also shows us which commands to use to unstage the file (so that it doesn't get committed with the next commit operation) or to list files that are not being tracked by git. In general, git provides a lot of useful information on the command line.
 
 `git add` is an important command that serves multiple purposes. Besides adding new files to a git repository, it allows to update the repository with the current version of a file already under version control (by adding it to be staged). In general, add here means "add (the local modifications to) my file the stage area so that I can later commit it".
+
+## Commiting changes
+
+Before commmitting, we need to let git know how we are so that commits can be correctly attributed. Once a commit is made, its author cannot be changed without modifying the hash corresponding to the commit (the commit metadata is included in the computation of the hash). For this and other git configuration items, one uses `git config`:
+
+```
+git config --global user.name "Your Name"
+git config --global user.email "Your.Name@cern.ch"
+```
+
+The `--global` flag can be omitted, but the information will only be stored in the configuration file for the current working copy instead of a file in you home directory (`~/.gitconfig` on unix systems). It is recommened to use the global configuration file.
+
+We can now commit our file using the `git commit` command:
+
+```
+GitTutorial $ git commit -m "Initializing the Masses.txt, adding the electron"
+[feature/particleMasses 1c28ed3] Initializing the Masses.txt, adding the electron
+ 1 file changed, 2 insertions(+)
+ create mode 100644 Particles/Masses.txt
+```
+
+Git shows us the branch we have committed to (feature/particleMasses), the new hash to which the branch now points to, as well as our commit message, specified with the `-m` flag. Note that if the flag is not specified, git will open whichever  In addition, it shows us how many files were affected and how many lines were added or removed. Running `git status` confirms that our feature branch now points to a different hash.
+
+```
+GitTutorial $ git branch --verbose
+* feature/particleMasses 1c28ed3 Initializing the Masses.txt, adding the electron
+  master                 3bc8fd1 Initial commit
+```
+
+Git status now tells us that there are no files known to git that are different in our working copy with respect to what is stored in **our local repository** (more on this later).
+
+```
+GitTutorial $ git status
+On branch feature/particleMasses
+nothing to commit (use -u to show untracked files)
+```
+
+One can also see the history of commits using `git log`:
+
+```
+GitTutorial $ git log
+commit 1c28ed31f0cb28b79c96f7b601a32b09768424b9
+Author: Karolos Potamianos <karolos.potamianos@cern.ch>
+Date:   Thu Jan 29 01:19:29 2015 +0100
+
+    Initializing the Masses.txt, adding the electron
+
+commit 3bc8fd10e9061c7f0074c9354c65440e4d976937
+Author: Karolos Potamianos <karolos.potamianos@cern.ch>
+Date:   Wed Jan 28 19:27:18 2015 +0100
+
+    Initial commit
+```
+
+Commits should be done as often as possible. Indeed, by committing often and into smaller chuncks belonging logically together, subsequent git operations (including conflict resolution) can be made much easier.
+
+# Interacting with remote repositories
+
+## Pushing your changes to your fork of GitTutorial
+
+Now that we've added changes to our local repository, we would like to share it with the world by pushing it to our fork of GitTutorial on GitHub. This is done via the **push** command:
+
+```
+GitTutorial $ git push -u origin feature/particleMasses
+Counting objects: 7, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (3/3), done.
+Writing objects: 100% (7/7), 612 bytes | 0 bytes/s, done.
+Total 7 (delta 0), reused 2 (delta 0)
+To git@github.com:karolos-potamianos/GitTutorial.git
+ * [new branch]      feature/particleMasses -> feature/particleMasses
+Branch feature/particleMasses set up to track remote branch feature/particleMasses from origin.
+```
+
+Git will do some compressing in order to efficiently store your data, and will push it to the remote named origin (your fork). The `-u` flag is needed to tell git that you want to "link" your local branch feature/particleMasses with that from the origin repository. This is only required for the first push. For subsequent pushes after new local commits: simply use git push.
+
+Like in the case of commits, you should push as often as possible to ensure proper backups.
+
+## Making your modifications mainstream: pull requests
+
+Now that your contribution is made public via your fork, you can tell the HEP-FCC maintainers that you have a feature ready to be brough in. To do so, GitHub as a feature called **pull request**. A pull request is an invitation to the maintainer of a project to bring in (merge in git lingo) your changes into the mainstream repository.
+
+On your fork's webpage (https://github.com/**your GitHub user**/GitTutorial), you'll see a button to do a pull request (additional information available [here](https://help.github.com/articles/using-pull-requests/)). You can then review your changes and submit a description of your feature. Once you submit the request, a page like [this](https://github.com/HEP-FCC/GitTutorial/pull/1) is created to keep track of the pull request.
+
+The goal of pull request is to allow for a review of the proposed code before it's added to the mainstream code base. Maintainers can request additional testing, endorsement, or stylistic corrections, etc. This ensures a form of uniformity of the code base. But because this process is a bit more tedious, it should only be used for complete features or bugfixes.
+
+Once the reuest has been approved, the code is merged into the mainstream repository HEP-FCC/GitTutorial.
+
+In fact a developer never pushes to the official repository, but instread invites the maintainers to pull from his/her repository.
+
+## Pulling changes from a remote repository
+
+So far, we've shown how to push changes to a remote repository but didn't address the important aspect of obtaining changes made by others. In the git lingo, this is called **pull**ing. This step should also happen as often as possible in order to be kept updated with the changes made by others.
+
+For this purpose, we'll add a remote called **official**, which will link to the mainstream [HEP-FCC/GitTutorial](https://github.com/HEP-FCC/GitTutorial) repository:
+
+```
+GitTutorial $ git remote add official git@github.com:HEP-FCC/GitTutorial.git
+GitTutorial $ git remote -v
+official	git@github.com:HEP-FCC/GitTutorial.git (fetch)
+official	git@github.com:HEP-FCC/GitTutorial.git (push)
+origin	git@github.com:karolos-potamianos/GitTutorial.git (fetch)
+origin	git@github.com:karolos-potamianos/GitTutorial.git (push)
+```
+
+This will be used to interact with the main repository.
+
+We can now pull from the official repository. Because we have linked the master to our own fork, we need to explicity tell `git` what our intentions are:
+
+```
+GitTutorialLocal $ git fetch official master
+remote: Counting objects: 1, done.
+remote: Total 1 (delta 0), reused 1 (delta 0)
+Unpacking objects: 100% (1/1), done.
+From github.com:HEP-FCC/GitTutorial
+ * branch            master     -> FETCH_HEAD
+ * [new branch]      master     -> official/master
+```
+
+It is intersting at this point to understand the state of our working copy.
+
+```
+GitTutorial $ git status
+On branch master
+Your branch is ahead of 'origin/master' by 2 commits.
+  (use "git push" to publish your local commits)
+nothing to commit (use -u to show untracked files)
+GitTutorial $ git branch --verbose --all
+  feature/particleMasses                1c28ed3 Initializing the Masses.txt, adding the electron
+* master                                afb9b55 [ahead 2] Merge pull request #1 from karolos-potamianos/feature/particleMasses
+  remotes/official/master               afb9b55 Merge pull request #1 from karolos-potamianos/feature/particleMasses
+  remotes/origin/HEAD                   -> origin/master
+  remotes/origin/feature/particleMasses 1c28ed3 Initializing the Masses.txt, adding the electron
+  remotes/origin/master                 3bc8fd1 Initial commit
+```
+
+We see that our branch is ahead of origin/master by two commits. The reason for this is that our fork's master hasn't been updated since the pull request was accepted. Therefore, that repository is not up to date. Let's go ahead ad update it:
+
+```
+GitTutorial $ git push
+Counting objects: 1, done.
+Writing objects: 100% (1/1), 287 bytes | 0 bytes/s, done.
+Total 1 (delta 0), reused 0 (delta 0)
+To git@github.com:karolos-potamianos/GitTutorial.git
+   3bc8fd1..afb9b55  master -> master
+GitTutorial $ git branch --verbose --all
+  feature/particleMasses                1c28ed3 Initializing the Masses.txt, adding the electron
+* master                                afb9b55 Merge pull request #1 from karolos-potamianos/feature/particleMasses
+  remotes/official/master               afb9b55 Merge pull request #1 from karolos-potamianos/feature/particleMasses
+  remotes/origin/HEAD                   -> origin/master
+  remotes/origin/feature/particleMasses 1c28ed3 Initializing the Masses.txt, adding the electron
+  remotes/origin/master                 afb9b55 Merge pull request #1 from karolos-potamianos/feature/particleMasses
+```
+
+We now notice that the [ahead 2] notification has disappeared.
