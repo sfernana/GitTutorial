@@ -1,6 +1,6 @@
 # GitTutorial
 
-This tutorial is meant as a brief introduction to git, with focus on the tools needed to contribute to the HEP-FCC repositories. This repository [FCC-HEP/GitTutorial](https://github.com/HEP-FCC/GitTutorial) is meant as a playground for familiarizing yourself with the version control system (VCS) chosen for HEP-FCC: `git`.
+This tutorial is meant as a brief introduction to git, with focus on the tools needed to contribute to the HEP-FCC repositories. This repository [HEP-FCC/GitTutorial](https://github.com/HEP-FCC/GitTutorial) is meant as a playground for familiarizing yourself with the version control system (VCS) chosen for HEP-FCC: `git`.
 
 ## About git
 
@@ -23,7 +23,7 @@ Go ahead and click the "Fork" button at the top right page of this page. If aske
 
 ## Cloning your fork to your local machine
 
-The main [FCC-HEP/GitTutorial](https://github.com/HEP-FCC/GitTutorial) repository as well as your own fork are *bare* repositories, which means they serve only the purpose of hosting code. In order to add files ans modify them, you need a local copy, or a checkout in VCS lingo. In git, this process is done thorough *cloning*. Cloning will do several things:
+The main [HEP-FCC/GitTutorial](https://github.com/HEP-FCC/GitTutorial) repository as well as your own fork are *bare* repositories, which means they serve only the purpose of hosting code. In order to add files ans modify them, you need a local copy, or a checkout in VCS lingo. In git, this process is done thorough *cloning*. Cloning will do several things:
 
 1. It will create a local copy of the repository you're cloning.
 2. It will assign the original repository you cloned from the name **origin** (*remote* in git lingo).
