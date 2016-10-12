@@ -1,2 +1,2 @@
 # Name	Mass (in MeV/c2)
-Electron	0.511
+electrons	0.511
